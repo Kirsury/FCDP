@@ -3,6 +3,7 @@ import io
 import json
 from git import Repo
 # from clang.cindex import Index, CursorKind, Config
+from tqdm import tqdm
 
 
 # ======= 启动分析 =======
@@ -17,17 +18,32 @@ if __name__ == "__main__":
     result = []
     dts_keyword = "DTS"
 
+    cnt1=0
+    cnt2=0
+    cnt3=0
+    cnt4=0
+
     for branch in repo.branches:
         print(f"Checking branch: {branch.name}")
         repo.git.checkout(branch)
 
-        for commit in repo.iter_commits(branch):
+        for commit in tqdm(repo.iter_commits(branch)):
             is_dts = dts_keyword in commit.message
             parent = commit.parents[0] if commit.parents else None
             diffs = commit.diff(parent, create_patch=True)
 
             for diff in diffs:
-                if not diff.b_path or not diff.b_path.endswith('.c'):
+                if not diff.a_path and not diff.b_path:
+                    cnt1+=1
+                    continue
+                if not diff.b_path.endswith('.c') and diff.a_path.endswith('.c'):
+                    cnt2+=1
+                    continue
+                if diff.b_path.endswith('.c') and not diff.a_path.endswith('.c'):
+                    cnt3+=1
+                    continue
+                else:
+                    cnt4+=1
                     continue
 
                 print(f"Processing file: {diff.b_path} in commit {commit.hexsha}")
