@@ -36,13 +36,18 @@ if __name__ == "__main__":
                 if not diff.a_path and not diff.b_path:
                     cnt1+=1
                     continue
-                if not diff.b_path.endswith('.c') and diff.a_path.endswith('.c'):
-                    cnt2+=1
+                if not diff.a_path.endswith('.c') and not diff.b_path.endswith('.c'):
+                    cnt1+=1
                     continue
-                if diff.b_path.endswith('.c') and not diff.a_path.endswith('.c'):
-                    cnt3+=1
-                    continue
-                else:
+                if not diff.a_path or not diff.a_path.endswith('.c'):
+                    if diff.b_path.endswith('.c'):
+                        cnt2+=1
+                        continue
+                if not diff.b_path or not diff.b_path.endswith('.c'):
+                    if  diff.a_path.endswith('.c'):
+                        cnt3+=1
+                        continue
+                if diff.a_path.endswith('.c') and diff.b_path.endswith('.c'):
                     cnt4+=1
                     continue
 
