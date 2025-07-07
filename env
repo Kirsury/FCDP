@@ -1,0 +1,2 @@
+pip install gitpython clang tree_sitter tree_sitter_cpp
+conda install git
