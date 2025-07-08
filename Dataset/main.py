@@ -5,6 +5,7 @@ from git import Repo
 # from clang.cindex import Index, CursorKind, Config
 from tqdm import tqdm
 
+# ======= 方法工具 =======
 
 # ======= 启动分析 =======
 if __name__ == "__main__":
@@ -33,22 +34,41 @@ if __name__ == "__main__":
             diffs = commit.diff(parent, create_patch=True)
 
             for diff in diffs:
-                if not diff.a_path and not diff.b_path:
-                    cnt1+=1
-                    continue
                 if (not diff.a_path or not diff.a_path.endswith('.c')) and (not diff.b_path or not diff.b_path.endswith('.c')):
                     cnt1+=1
+                    """
+                    skip, path of a and b are all illegal.
+                    """
                     continue
+
                 if not diff.a_path or not diff.a_path.endswith('.c'):
                     if diff.b_path.endswith('.c'):
                         cnt2+=1
+                        """
+                        TODO
+                        path of a is illegal.
+                        提取b中的所有函数，这些函数标记为无缺陷的函数，label为1
+                        """
                         continue
                 if not diff.b_path or not diff.b_path.endswith('.c'):
                     if  diff.a_path.endswith('.c'):
                         cnt3+=1
+                        """
+                        TODO
+                        path of b is illegal.
+                        提取a中的所有函数，
+                        如果is_dts为真，这些函数被标记为有缺陷的函数，label为1；反之如果为假，这些函数标记为无缺陷，label为0.
+                        """
                         continue
                 if diff.a_path.endswith('.c') and diff.b_path.endswith('.c'):
                     cnt4+=1
+                    """
+                    TODO
+                    分别提取a和b中的所有函数，a中的函数对应修改前的文件中的函数，b中的函数对应修改后的文件中的函数。
+                    比对a和b中的函数可以发现哪些函数是被修改的。
+                    如果is_dts为真，那么被修改的a中的函数被标记为有缺陷的函数，label为1；a中剩余的函数和b中的函数标记为无缺陷，label为0.
+                    如果is_dts为假，那么所有函数都被标记为无缺陷，label为0.
+                    """
                     continue
 
                 print(f"Processing file: {diff.b_path} in commit {commit.hexsha}")
