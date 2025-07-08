@@ -1,14 +1,8 @@
 import os
 import tree_sitter_c
 from tree_sitter import Language, Parser
+import json
 
-"""
-pip show tree_sitter
-Name: tree-sitter
-Version: 0.23.2
-
-pip install tree-sitter-c==0.23.2
-"""
 
 class CFunctionExtractor:
     def __init__(self):
@@ -18,6 +12,7 @@ class CFunctionExtractor:
     def extract_functions(self, file_path):
         with open(file_path, 'r', encoding='utf-8') as f:
             code = f.read()
+        code_bytes = code.encode('utf-8')
 
         lines = code.splitlines()
         tree = self.parser.parse(bytes(code, "utf8"))
@@ -48,7 +43,7 @@ class CFunctionExtractor:
                     'start_line': start_line + 1,
                     'end_line': end_line + 1,
                     'code': "\n".join(non_empty_lines),
-                    'ast_node': node
+                    'ast': json.dumps(node_to_text_dict(node, code_bytes))
                 })
 
             for child in node.children:
@@ -59,18 +54,46 @@ class CFunctionExtractor:
 
 from pprint import pprint  # 用于美观打印 dict
 
-# === 新增：AST 转 Python dict 的辅助函数 ===
+def node_to_text_dict(node, code_bytes):
+    if node.child_count == 0:
+        # 叶子节点，返回代码文本
+        return code_bytes[node.start_byte:node.end_byte].decode('utf-8')
+    else:
+        # 非叶子节点，递归所有子节点，把结果组成列表
+        children_texts = [node_to_text_dict(child, code_bytes) for child in node.children]
+        return children_texts
+
 def node_to_dict(node, code_bytes):
-    d = {
+
+    result = {
         'type': node.type,
         'start_point': node.start_point,
-        'end_point': node.end_point,
+        'end_point': node.end_point
     }
-    if len(node.children) == 0:
-        d['text'] = code_bytes[node.start_byte:node.end_byte].decode('utf-8')
+
+    # 添加文本内容（叶子节点）
+    if node.child_count == 0:
+        result['text'] = code_bytes[node.start_byte:node.end_byte].decode('utf-8')
+
+    # 递归遍历子节点
     else:
-        d['children'] = [node_to_dict(child, code_bytes) for child in node.children]
-    return d
+        result['children'] = [node_to_dict(child, code_bytes) for child in node.children]
+
+    return result
+
+
+# === 新增：AST 转 Python dict 的辅助函数 ===
+# def node_to_dict(node, code_bytes):
+#     d = {
+#         'type': node.type,
+#         'start_point': node.start_point,
+#         'end_point': node.end_point,
+#     }
+#     if len(node.children) == 0:
+#         d['text'] = code_bytes[node.start_byte:node.end_byte].decode('utf-8')
+#     else:
+#         d['children'] = [node_to_dict(child, code_bytes) for child in node.children]
+#     return d
 
 # === 以下保留原结构，只做最小修改 ===
 if __name__ == '__main__':
@@ -89,12 +112,15 @@ if __name__ == '__main__':
 
     // 普通函数
     int add(int a, int b) {
+    
         return a + b;
     }
 
     // 带注释的函数
     int subtract(int a, int b) {
+    
         // 计算差值
+        
         return a - b;
     }
     '''
@@ -113,9 +139,10 @@ if __name__ == '__main__':
         print(f"Function: {func['name']}")
         print(f"Lines: {func['start_line']} - {func['end_line']}")
         print("Code:\n" + func['code'])
-
+        print("Ast:")
+        pprint(json.loads(func['ast']))
         # ✅ 新增：打印该函数的 AST dict
-        ast_dict = node_to_dict(func['ast_node'], code_bytes)
-        pprint(ast_dict)
+        # ast_dict = node_to_dict(func['ast_node'], code_bytes)
+        # pprint(ast_dict)
 
         print("=" * 40)
