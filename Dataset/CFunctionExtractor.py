@@ -10,6 +10,8 @@ class CFunctionExtractor:
         self.parser = Parser(self.language)
 
     def extract_functions(self, file_path):
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"{file_path} 不存在")
         with open(file_path, 'rb') as f:
             raw_file = f.read()
             encoding = chardet.detect(raw_file)['encoding']
