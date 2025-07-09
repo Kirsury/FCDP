@@ -51,7 +51,7 @@ if __name__ == '__main__':
         print(f"Checking branch: {branch.name}")
         repo.git.checkout(branch)
 
-        for commit in tqdm(repo.iter_commits(branch)):
+        for commit in tqdm(list(repo.iter_commits(branch))):
             is_dts = dts_keyword in commit.message
             dts_id = extract_dts_id(commit.message)
             parent = commit.parents[0] if commit.parents else None
