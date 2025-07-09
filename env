@@ -1,7 +1,7 @@
 conda create -n fcdp python=3.9
 
 pip install gitpython clang tree_sitter tree_sitter_cpp
-conda install git
+conda install git tqdm
 pip install tree-sitter-c==0.23.2
 
 """
@@ -10,4 +10,11 @@ Name: tree-sitter
 Version: 0.23.2
 
 pip install tree-sitter-c==0.23.2
-"""
+
+Conda
+Channels:
+ - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+ - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+ - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+ - defaults
+Platform: win-64
