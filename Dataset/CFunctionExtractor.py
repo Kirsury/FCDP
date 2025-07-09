@@ -29,17 +29,20 @@ class CFunctionExtractor:
                 # 去除空行，保留注释和代码
                 non_empty_lines = [l for l in func_lines if l.strip() != '']
 
-                # 提取函数名
+                # 提取函数名、函数签名
                 func_name = None
+                func_signature = None
                 for child in node.children:
-                    if child.type == 'declarator':
+                    if child.type == 'function_declarator':
+                        func_signature = code_bytes[child.start_byte:child.end_byte].decode('utf-8')
                         for sub in child.children:
                             if sub.type == 'identifier':
-                                func_name = code[sub.start_byte:sub.end_byte]
+                                func_name = code_bytes[sub.start_byte:sub.end_byte].decode('utf-8')
                                 break
 
                 functions.append({
                     'name': func_name,
+                    'signature': func_signature,
                     'start_line': start_line + 1,
                     'end_line': end_line + 1,
                     'code': "\n".join(non_empty_lines),
@@ -136,7 +139,8 @@ if __name__ == '__main__':
         code_bytes = f.read()
 
     for func in funcs:
-        print(f"Function: {func['name']}")
+        print(f"Function Name: {func['name']}")
+        print(f"Function Signature: {func['signature']}")
         print(f"Lines: {func['start_line']} - {func['end_line']}")
         print("Code:\n" + func['code'])
         print("Ast:")

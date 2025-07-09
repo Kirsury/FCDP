@@ -17,9 +17,9 @@ if __name__ == "__main__":
     每条数据的列包括函数code、相应的ast、是否包含缺陷、branch name、commit id、DTS id（如果有缺陷，写入id；如果无缺陷写入'None'）
     """
 
-
+    # git clone https://github.com/libgit2/libgit2.git
     # 设置你本地的项目路径
-    repo_path = "/path/to/your/git-c-project"
+    repo_path = r'D:\GH\Code\Git\FCDP\Dataset\libgit2'
 
     # 控制台调试建议
     # results = process_repo(repo_path)
