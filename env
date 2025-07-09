@@ -3,13 +3,13 @@ conda create -n fcdp python=3.9
 pip install gitpython clang tree_sitter tree_sitter_cpp
 conda install git tqdm
 pip install tree-sitter-c==0.23.2
+conda install chardet
+
 
 """
 pip show tree_sitter
 Name: tree-sitter
 Version: 0.23.2
-
-pip install tree-sitter-c==0.23.2
 
 Conda
 Channels:

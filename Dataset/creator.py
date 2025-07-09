@@ -88,7 +88,7 @@ if __name__ == '__main__':
                         print(f"[Error] Diff extraction failed: {e}")
                         continue
 
-                    # 用最粗暴的方式判断哪些函数变化了（根据函数名匹配）
+                    # 根据AST判断哪些函数变化了
                     a_func_map = {hash_json_str(f['ast']): f for f in a_funcs}
                     b_func_map = {hash_json_str(f['ast']): f for f in b_funcs}
                     a_func_hashes = set(a_func_map.keys())

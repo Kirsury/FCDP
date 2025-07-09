@@ -2,7 +2,7 @@ import os
 import tree_sitter_c
 from tree_sitter import Language, Parser
 import json
-
+import chardet
 
 class CFunctionExtractor:
     def __init__(self):
@@ -10,8 +10,12 @@ class CFunctionExtractor:
         self.parser = Parser(self.language)
 
     def extract_functions(self, file_path):
-        with open(file_path, 'r', encoding='utf-8') as f:
-            code = f.read()
+        with open(file_path, 'rb') as f:
+            raw_file = f.read()
+            encoding = chardet.detect(raw_file)['encoding']
+            code = raw_file.decode(encoding)
+        # with open(file_path, 'r', encoding='utf-8') as f:
+        #     code = f.read()
         code_bytes = code.encode('utf-8')
 
         lines = code.splitlines()
