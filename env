@@ -18,3 +18,5 @@ Channels:
  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
  - defaults
 Platform: win-64
+
+pip install numpy
