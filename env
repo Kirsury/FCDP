@@ -20,3 +20,7 @@ Channels:
 Platform: win-64
 
 pip install numpy
+pip install torch
+
+pip install scikit-learn transformers numpy
+pip install timedate
