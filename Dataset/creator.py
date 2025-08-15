@@ -7,6 +7,12 @@ from tqdm import tqdm
 
 from Dataset.CFunctionExtractor import CFunctionExtractor
 
+
+"""
+***This is entrypoint for creating dataset.***
+Functions changed are defined as bug.
+"""
+
 def extract_dts_id(message):
     match = re.search(r'DTS(\d+)', message)
     return f'DTS{match.group(1)}' if match else 'None'
